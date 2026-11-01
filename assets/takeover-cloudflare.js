@@ -78,6 +78,9 @@ const baseEdit=openRecEdit;openRecEdit=function(id){if(String(id).startsWith('T'
 const baseEditAt=typeof openRecEditAt==='function'?openRecEditAt:null;if(baseEditAt)openRecEditAt=function(id,col){if(String(id).startsWith('T')){const r=mem.items.find(r=>r.id===Number(String(id).slice(1)));if(r&&KCOL[col])return attachment(r,KCOL[col]);return edit(Number(String(id).slice(1)));}return baseEditAt.apply(this,arguments);};
 const baseRemote=applyRemoteRow;applyRemoteRow=function(change){if(change?.sheet==='takeover'){refresh();return;}return baseRemote.apply(this,arguments);};
 const baseRemove=recRemoveRow;recRemoveRow=function(sheet,row){if(sheet==='takeover'){mem.items=mem.items.filter(r=>r.id!==row);STATE.takeover=STATE.takeover.filter(r=>r.row!==row);syncState();return;}return baseRemove.apply(this,arguments);};
+const baseAdd=openRecAdd;openRecAdd=function(sheet){if(sheet==='takeover')return edit();return baseAdd.apply(this,arguments);};
+const baseExport=exportTakeoverCsv;exportTakeoverCsv=function(){return exportCsv();};
+const baseSync=sheetSync;sheetSync=function(sheet){if(sheet==='takeover')return refresh();return baseSync.apply(this,arguments);};
 const baseCall=callApi;callApi=async function(action,p,...args){
  if(p?.sheet!=='takeover'||!action.startsWith('rows.'))return baseCall.call(this,action,p,...args);
  if(action==='rows.meta')return{ok:true,headers:headers(),options:{}};
