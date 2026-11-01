@@ -70,7 +70,7 @@ function exportCsv(){if(!has('export'))return;const fields=Object.keys(LABELS).f
 const baseBuild=buildTakeover;buildTakeover=function(rows){const result=baseBuild(rows);result.forEach(r=>{const native=mem.items.find(x=>x.id===r.row);if(native){r.links=linkArray(native);r._cfVersion=native.version;}});return result;};
 const baseFast=fetchSheetsFast;fetchSheetsFast=async function(spec){const target=spec.some(s=>s.k==='takeover');if(!target)return baseFast.apply(this,arguments);const [rest,items]=await Promise.all([baseFast(spec.filter(s=>s.k!=='takeover')),load()]);return {...rest,takeover:{rows:legacyRows(items),count:Math.max(1,...items.map(r=>r.id))+1}};};
 const baseRows=fetchSheetRows;fetchSheetRows=async function(title){if(title==='Data Mitra Takeover')return legacyRows(await load());return baseRows.apply(this,arguments);};
-const baseLinks=fetchLinks;fetchLinks=async function(title){if(title==='Data Mitra Takeover')return new Map((await load()).map(r=>[r.id,linkArray(r)]));return baseLinks.apply(this,arguments);};
+const baseLinks=fetchLinks;fetchLinks=async function(title){if(title==='Data Mitra Takeover'){const m=new Map((await load()).map(r=>[r.id,linkArray(r)]));m.failed=[];return m;}return baseLinks.apply(this,arguments);};
 const baseSnapshot=loadSnapshot;loadSnapshot=async function(){const ok=await baseSnapshot.apply(this,arguments);STATE.takeover=mem.loaded?buildTakeover(legacyRows(mem.items)):[];STATE.headers.takeover=headers();return ok;};
 const baseRender=renderTakeoverPage;renderTakeoverPage=function(){baseRender.apply(this,arguments);render();};
 const baseDetail=renderTakeoverDetail;renderTakeoverDetail=function(r){if(typeof closeDetailModal==='function')closeDetailModal();detail(r.row);};
